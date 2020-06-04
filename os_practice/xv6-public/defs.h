@@ -24,6 +24,7 @@ void            panic(char*) __attribute__((noreturn));
 
 // exec.c
 int             exec(char*, char**);
+int             exec2(char*, char**, int);
 
 // file.c
 struct file*    filealloc(void);
@@ -190,8 +191,10 @@ void            clearpteu(pde_t *pgdir, char *uva);
 void            yield(void);
 int             getlev(void);
 int             setpriority(int, int);
-
 void            priorityboosting(void);
 
+//proj2_syscall.c
+int             getadmin(char*);
+int             setmemorylimit(int, int);
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

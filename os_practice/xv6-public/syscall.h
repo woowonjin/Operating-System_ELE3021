@@ -22,4 +22,7 @@
 #define SYS_close  21
 #define SYS_yield  22
 #define SYS_getlev 23
-#define SYS_setpriority  22
+#define SYS_setpriority  24
+#define SYS_getadmin  25
+#define SYS_setmemorylimit  26
+#define SYS_exec2  27

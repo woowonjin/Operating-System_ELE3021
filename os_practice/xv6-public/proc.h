@@ -33,7 +33,7 @@ struct context {
 };
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
-
+enum exec_mode { USER, ADMINISTRATOR};
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
@@ -53,6 +53,9 @@ struct proc {
   int queue_level;
   int ticks;
   int priority;
+  //for proj2
+  enum exec_mode mode;
+  uint memory_limit;
 };
 
 // Process memory is laid out contiguously, low addresses first:

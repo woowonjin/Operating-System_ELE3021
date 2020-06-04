@@ -26,6 +26,9 @@ int uptime(void);
 void yield(void);
 int getlev(void);
 int setpriority(int, int);
+int getadmin(char*);
+int setmemorylimit(int, int);
+int exec2(char*, char**, int);
 
 // ulib.c
 int stat(const char*, struct stat*);

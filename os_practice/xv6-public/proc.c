@@ -92,6 +92,9 @@ found:
   p->queue_level = 0;
   p->priority = 0;
   p->ticks = 0;
+  //initial mode is USER
+  p->mode = USER;
+  p->memory_limit = 0;
 
   release(&ptable.lock);
 
@@ -166,6 +169,11 @@ growproc(int n)
   struct proc *curproc = myproc();
 
   sz = curproc->sz;
+
+  if(curproc->memory_limit != 0 && curproc->memory_limit < sz+n){
+    return 0;
+  }
+
   if(n > 0){
     if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
       return -1;
@@ -697,4 +705,40 @@ void priorityboosting(void){
     p->ticks = 0;
   }
   //release(&ptable.lock);
+}
+
+int getadmin(char* pwd){
+    if(strncmp(pwd, "2017029970", -1) != 0){
+        return -1;
+    }
+    myproc()->mode = ADMINISTRATOR;
+    return 0;
+}
+
+int setmemorylimit(int pid, int limit){
+  if(myproc()->mode != ADMINISTRATOR){
+    return -1;
+  }
+  struct proc* p;
+  acquire(&ptable.lock);
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->pid == pid){
+        break;
+    }
+  }
+  release(&ptable.lock);
+  if(p->pid != pid || limit < 0){
+    return -1;
+  }
+  if(limit < p->sz){
+    if(limit == 0){
+        p->memory_limit = limit;
+        return 0;
+    }
+    else{
+        return -1;
+    }
+  }
+  p->memory_limit = limit;
+  return 0;
 }
