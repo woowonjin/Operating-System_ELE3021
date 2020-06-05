@@ -32,7 +32,6 @@ sys_exec2(void)
   char *path, *argv[MAXARG];
   int i, stacksize;
   uint uargv, uarg;
-
   if(argstr(0, &path) < 0 || argint(1, (int*)&uargv) < 0 || argint(2, &stacksize) < 0){
     return -1;
   }
@@ -51,4 +50,8 @@ sys_exec2(void)
   }
 
   return exec2(path, argv, stacksize);
+}
+
+int sys_list(){
+    return list();
 }

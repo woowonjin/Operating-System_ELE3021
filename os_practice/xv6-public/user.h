@@ -29,6 +29,7 @@ int setpriority(int, int);
 int getadmin(char*);
 int setmemorylimit(int, int);
 int exec2(char*, char**, int);
+int list(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

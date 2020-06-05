@@ -56,6 +56,8 @@ struct proc {
   //for proj2
   enum exec_mode mode;
   uint memory_limit;
+  int stack_size;
+  int tick;
 };
 
 // Process memory is laid out contiguously, low addresses first:

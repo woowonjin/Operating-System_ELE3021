@@ -224,6 +224,10 @@ allocuvm(pde_t *pgdir, uint oldsz, uint newsz)
   char *mem;
   uint a;
 
+  if(myproc()->memory_limit != 0 && myproc()->memory_limit < newsz){
+    return 0;
+  }
+
   if(newsz >= KERNBASE)
     return 0;
   if(newsz < oldsz)

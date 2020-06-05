@@ -196,5 +196,6 @@ void            priorityboosting(void);
 //proj2_syscall.c
 int             getadmin(char*);
 int             setmemorylimit(int, int);
+int             list(void);
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

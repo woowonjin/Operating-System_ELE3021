@@ -16,8 +16,11 @@ exec(char *path, char **argv)
   struct elfhdr elf;
   struct inode *ip;
   struct proghdr ph;
-  pde_t *pgdir, *oldpgdir; //page table
+  pde_t *pgdir, *oldpgdir;
   struct proc *curproc = myproc();
+
+  //cprintf("%s , %s \n",path,*argv);
+
 
   begin_op();
 
@@ -70,6 +73,7 @@ exec(char *path, char **argv)
 
   // Push argument strings, prepare rest of stack in ustack.
   for(argc = 0; argv[argc]; argc++) {
+	  //cprintf("%s \n",argv[argc]);
     if(argc >= MAXARG)
       goto bad;
     sp = (sp - (strlen(argv[argc]) + 1)) & ~3;
@@ -99,6 +103,12 @@ exec(char *path, char **argv)
   curproc->sz = sz;
   curproc->tf->eip = elf.entry;  // main
   curproc->tf->esp = sp;
+
+  curproc->mode = USER;
+  curproc->memory_limit = 0;
+  curproc->stack_size = 1;
+
+
   switchuvm(curproc);
   freevm(oldpgdir);
   return 0;
@@ -113,16 +123,9 @@ exec(char *path, char **argv)
   return -1;
 }
 
-
 int
 exec2(char *path, char **argv, int stacksize)
 {
-  if(myproc()->mode != ADMINISTRATOR){
-    return -1;
-  }
-  if(stacksize < 1 || stacksize > 100){
-    return -1;
-  }
   char *s, *last;
   int i, off;
   uint argc, sz, sp, ustack[3+MAXARG+1];
@@ -131,9 +134,14 @@ exec2(char *path, char **argv, int stacksize)
   struct proghdr ph;
   pde_t *pgdir, *oldpgdir; //page table
   struct proc *curproc = myproc();
-
+  //Administrator mode check
+  if(curproc->mode != ADMINISTRATOR){
+    return -1;
+  }
+  if(stacksize < 1 || stacksize > 100){
+    return -1;
+  }
   begin_op();
-
   if((ip = namei(path)) == 0){
     end_op();
     cprintf("exec: fail\n");
@@ -176,9 +184,9 @@ exec2(char *path, char **argv, int stacksize)
   // Allocate two pages at the next page boundary.
   // Make the first inaccessible.  Use the second as the user stack.
   sz = PGROUNDUP(sz);
-  if((sz = allocuvm(pgdir, sz, sz + 2*stacksize*PGSIZE)) == 0)
+  if((sz = allocuvm(pgdir, sz, sz + (stacksize+1)*PGSIZE)) == 0)
     goto bad;
-  clearpteu(pgdir, (char*)(sz - 2*stacksize*PGSIZE));
+  clearpteu(pgdir, (char*)(sz - (stacksize+1)*PGSIZE));
   sp = sz;
 
   // Push argument strings, prepare rest of stack in ustack.
@@ -205,6 +213,11 @@ exec2(char *path, char **argv, int stacksize)
     if(*s == '/')
       last = s+1;
   safestrcpy(curproc->name, last, sizeof(curproc->name));
+  
+  //initial mode is USER
+  curproc->mode = USER;
+  curproc->memory_limit = 0;
+  curproc->stack_size = stacksize;
 
   // Commit to the user image.
   oldpgdir = curproc->pgdir;

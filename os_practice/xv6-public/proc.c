@@ -89,12 +89,14 @@ found:
   p->state = EMBRYO;
   p->pid = nextpid++;
   //init custom for MLFQ  
-  p->queue_level = 0;
-  p->priority = 0;
-  p->ticks = 0;
-  //initial mode is USER
+  //p->queue_level = 0;
+  //p->priority = 0;
+  //p->ticks = 0;
+
   p->mode = USER;
   p->memory_limit = 0;
+  p->stack_size = 1;
+  p->tick = ticks;
 
   release(&ptable.lock);
 
@@ -167,12 +169,7 @@ growproc(int n)
 {
   uint sz;
   struct proc *curproc = myproc();
-
   sz = curproc->sz;
-
-  if(curproc->memory_limit != 0 && curproc->memory_limit < sz+n){
-    return 0;
-  }
 
   if(n > 0){
     if((sz = allocuvm(curproc->pgdir, sz, sz + n)) == 0)
@@ -212,6 +209,10 @@ fork(void)
   np->parent = curproc;
   *np->tf = *curproc->tf;
 
+  //copy parent's mode, memorylimit, stacksize
+  np->mode = curproc->mode;
+  np->memory_limit = curproc->memory_limit;
+  np->stack_size = curproc->stack_size;
   // Clear %eax so that fork returns 0 in the child.
   np->tf->eax = 0;
 
@@ -740,5 +741,18 @@ int setmemorylimit(int pid, int limit){
     }
   }
   p->memory_limit = limit;
+  return 0;
+}
+
+int list(){  
+  struct proc* p;
+  acquire(&ptable.lock);
+  cprintf("NAME          | PID | TIME(ms) | MEMORY(bytes) | MEMLIM(bytes)\n");
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->pid > 0 && p->state != UNUSED){
+        cprintf("%s          | %d  |   %d       | %d            | %d\n", p->name, p->pid, ticks-p->tick, p->sz, p->memory_limit);    
+      }
+  }
+  release(&ptable.lock);
   return 0;
 }
