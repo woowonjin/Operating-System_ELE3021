@@ -58,6 +58,7 @@ struct proc {
   uint memory_limit;
   int stack_size;
   int tick;
+  char* shared_memory;
 };
 
 // Process memory is laid out contiguously, low addresses first:

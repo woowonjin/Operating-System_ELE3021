@@ -55,3 +55,11 @@ sys_exec2(void)
 int sys_list(){
     return list();
 }
+
+char* sys_getshmem(){
+    int pid;
+    if(argint(0, &pid) < 0){
+        return 0;
+    }
+    return getshmem(pid);
+}

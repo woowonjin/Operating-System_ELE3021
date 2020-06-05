@@ -107,7 +107,7 @@ exec(char *path, char **argv)
   curproc->mode = USER;
   curproc->memory_limit = 0;
   curproc->stack_size = 1;
-
+  curproc->shared_memory = kalloc();
 
   switchuvm(curproc);
   freevm(oldpgdir);
@@ -218,6 +218,7 @@ exec2(char *path, char **argv, int stacksize)
   curproc->mode = USER;
   curproc->memory_limit = 0;
   curproc->stack_size = stacksize;
+  curproc->shared_memory = kalloc();
 
   // Commit to the user image.
   oldpgdir = curproc->pgdir;

@@ -7,6 +7,8 @@
 #include "proc.h"
 #include "spinlock.h"
 
+extern pte_t* walkpgdir(pde_t* , const void* , int);
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -197,7 +199,8 @@ fork(void)
   if((np = allocproc()) == 0){
     return -1;
   }
-
+  // Allocate sharedmemory of child process
+  np->shared_memory = kalloc();
   // Copy process state from proc.
   if((np->pgdir = copyuvm(curproc->pgdir, curproc->sz)) == 0){
     kfree(np->kstack);
@@ -755,4 +758,27 @@ int list(){
   }
   release(&ptable.lock);
   return 0;
+}
+
+char* getshmem(int pid){
+  struct proc* p;
+  acquire(&ptable.lock);
+  char* address = 0;
+  pte_t* target;
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->pid == pid){
+        address = p->shared_memory;
+        break;
+      }
+  }
+  release(&ptable.lock);
+  if(myproc()->pid == pid){ //read and write
+      target = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)address), 1);
+      *target = V2P(p->shared_memory) | PTE_P | PTE_U | PTE_W;
+  }  
+  else{ // only read
+      target = walkpgdir(myproc()->pgdir, (char*)PGROUNDDOWN((uint)address), 1);
+      *target = V2P(p->shared_memory) | PTE_P | PTE_U;
+  }
+  return address;
 }
