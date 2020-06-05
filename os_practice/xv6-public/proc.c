@@ -750,7 +750,7 @@ int list(){
   cprintf("NAME          | PID | TIME(ms) | MEMORY(bytes) | MEMLIM(bytes)\n");
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->pid > 0 && p->state != UNUSED){
-        cprintf("%s          | %d  |   %d       | %d            | %d\n", p->name, p->pid, ticks-p->tick, p->sz, p->memory_limit);    
+        cprintf("%s          | %d  |   %d       | %d            | %d\n", p->name, p->pid, (ticks-p->tick)*10, p->sz, p->memory_limit);    
       }
   }
   release(&ptable.lock);
