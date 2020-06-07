@@ -279,7 +279,6 @@ exit(void)
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
-  kfree(curproc->shared_memory);
   sched();
   panic("zombie exit");
 }
@@ -305,6 +304,7 @@ wait(void)
         // Found one.
         pid = p->pid;
         kfree(p->kstack);
+        kfree(p->shared_memory);
         p->kstack = 0;
         freevm(p->pgdir);
         p->pid = 0;
@@ -631,7 +631,6 @@ kill(int pid)
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->pid == pid){
       p->killed = 1;
-      kfree(p->shared_memory);
       // Wake process from sleep if necessary.
       if(p->state == SLEEPING)
         p->state = RUNNABLE;
