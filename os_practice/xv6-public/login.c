@@ -60,12 +60,12 @@ int main(int argc, char *argv[]){
         password[strlen(password)-1] = '\0';
         for(int i = 0; i < 10; i++){
             if((strcmp(name,list[i].id) == 0) && (strcmp(password, list[i].pwd) == 0)){
+                owner(name);
                 success = 1;
                 break;
             }
         }
         if(success){
-            owner(name);
             pid = fork();
             if(pid < 0){
                 printf(1, "init: fork failed\n");

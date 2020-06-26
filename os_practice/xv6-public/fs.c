@@ -223,9 +223,12 @@ ialloc(uint dev, short type)
     if(dip->type == 0){  // a free inode
       memset(dip, 0, sizeof(*dip));
       dip->type = type;
+      strcpy(dip->owner, myproc()->owner);
       log_write(bp);   // mark it allocated on the disk
       brelse(bp);
-      return iget(dev, inum);
+      struct inode* rip = iget(dev, inum);
+      strcpy(rip->owner, myproc()->owner);
+      return rip;
     }
     brelse(bp);
   }
@@ -322,6 +325,8 @@ ilock(struct inode *ip)
     ip->minor = dip->minor;
     ip->nlink = dip->nlink;
     ip->size = dip->size;
+    strcpy(ip->owner, dip->owner);
+    ip->mode = dip->mode;
     memmove(ip->addrs, dip->addrs, sizeof(ip->addrs));
     brelse(bp);
     ip->valid = 1;
@@ -463,6 +468,8 @@ stati(struct inode *ip, struct stat *st)
   st->type = ip->type;
   st->nlink = ip->nlink;
   st->size = ip->size;
+  st->mode = ip->mode;
+  strcpy(st->owner, ip->owner);
 }
 
 //PAGEBREAK!
@@ -689,6 +696,10 @@ nameiparent(char *path, char *name)
 }
 
 int useradd(char* username, char* password){
+    if(strcmp(myproc()->owner, "root") != 0){
+        return -1;
+    }
+
     struct inode* ip = namei("./userlist");
     username[strlen(username)] = 0;
     password[strlen(password)] = 0;
@@ -746,6 +757,9 @@ int useradd(char* username, char* password){
 }
 
 int userdel(char* username){
+    if(strcmp(myproc()->owner, "root") != 0){
+        return -1;
+    }
     struct inode* ip;
     username[strlen(username)] = 0;
     if(strcmp(username, "root") == 0){
@@ -774,4 +788,26 @@ int userdel(char* username){
     end_op();
     return -1;
 
+}
+
+int owner(char* username){
+    strcpy(myproc()->owner, username);
+    return 0;
+}
+
+int chmod(char* path, int mode){
+    struct inode* ip;
+    begin_op();
+    if((ip = namei(path)) == 0){
+        return -1;
+    }
+
+    if((strcmp(myproc()->owner, ip->owner) != 0) && (strcmp(myproc()->owner, "root") != 0)){
+        return -1;
+    }
+    //mode change
+    ip->mode = mode;
+    iupdate(ip);
+    end_op();
+    return 0;
 }

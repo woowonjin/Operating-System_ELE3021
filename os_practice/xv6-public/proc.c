@@ -9,6 +9,7 @@
 
 extern pte_t* walkpgdir(pde_t* , const void* , int);
 
+extern char* strcpy(char *s, const char *t);
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -229,7 +230,7 @@ fork(void)
   safestrcpy(np->name, curproc->name, sizeof(curproc->name));
 
   pid = np->pid;
-
+  strcpy(np->owner, curproc->owner);
   acquire(&ptable.lock);
 
   np->state = RUNNABLE;

@@ -114,6 +114,7 @@ extern int sys_getshmem(void);
 extern int sys_useradd(void);
 extern int sys_userdel(void);
 extern int sys_owner(void);
+extern int sys_chmod(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -148,6 +149,7 @@ static int (*syscalls[])(void) = {
 [SYS_useradd]   sys_useradd,
 [SYS_userdel]   sys_userdel,
 [SYS_owner]   sys_owner,
+[SYS_chmod]   sys_chmod,
 };
 
 void

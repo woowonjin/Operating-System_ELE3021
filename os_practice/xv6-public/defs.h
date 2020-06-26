@@ -202,5 +202,7 @@ char*           getshmem(int);
 //proj3
 int             useradd(char*, char*);
 int             userdel(char*);
+int             owner(char*);
+int             chmod(char*,int);
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

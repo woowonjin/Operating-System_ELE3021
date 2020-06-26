@@ -34,6 +34,7 @@ char* getshmem(int);
 int useradd(char*, char*);
 int userdel(char*);
 int owner(char*);
+int chmod(char*,int);
 
 // ulib.c
 int stat(const char*, struct stat*);

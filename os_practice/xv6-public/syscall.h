@@ -31,3 +31,4 @@
 #define SYS_useradd  30
 #define SYS_userdel  31
 #define SYS_owner  32
+#define SYS_chmod  33

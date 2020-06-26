@@ -40,6 +40,7 @@ void rinode(uint inum, struct dinode *ip);
 void rsect(uint sec, void *buf);
 uint ialloc(ushort type);
 void iappend(uint inum, void *p, int n);
+extern char* strcpy(char *s, const char *t);
 
 // convert to intel byte order
 ushort
@@ -226,6 +227,8 @@ ialloc(ushort type)
   uint inum = freeinode++;
   struct dinode din;
 
+  strcpy(din.owner, "root");
+  din.mode = MODE_RUSR | MODE_WUSR | MODE_XUSR | MODE_ROTH | MODE_XOTH;
   bzero(&din, sizeof(din));
   din.type = xshort(type);
   din.nlink = xshort(1);

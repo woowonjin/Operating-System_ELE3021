@@ -43,7 +43,46 @@ ls(char *path)
 
   switch(st.type){
   case T_FILE:
-    printf(1, "%s %d %d %d\n", fmtname(path), st.type, st.ino, st.size);
+    printf(1, "%s ", fmtname(path));
+    printf(1, "-");
+    if((st.mode & 32) != 0){
+        printf(1, "r");
+    }
+    else{
+        printf(1, "-");
+    }
+    if((st.mode & 16) != 0){
+        printf(1, "w");
+    }
+    else{
+        printf(1, "-");
+    }
+    if((st.mode & 8) != 0){
+        printf(1, "x");
+    }
+    else{
+        printf(1, "-");
+    }
+    if((st.mode & 4) != 0){
+        printf(1, "r");
+    }
+    else{
+        printf(1, "-");
+    }
+    if((st.mode & 2) != 0){
+        printf(1, "w");
+    }
+    else{
+        printf(1, "-");
+    }
+    if((st.mode & 1) != 0){
+        printf(1, "x");
+    }
+    else{
+        printf(1, "-");
+    }
+    printf(1, " %s", st.owner);
+    printf(1, "%d %d %d\n", st.type, st.ino, st.size);
     break;
 
   case T_DIR:
@@ -63,7 +102,51 @@ ls(char *path)
         printf(1, "ls: cannot stat %s\n", buf);
         continue;
       }
-      printf(1, "%s %d %d %d\n", fmtname(buf), st.type, st.ino, st.size);
+      printf(1, "   %d    ", st.mode);
+    printf(1, "%s ", fmtname(buf));
+      if(st.type == T_DIR){
+        printf(1, "d");
+      }
+      else{
+        printf(1, "-");
+      }
+      if((st.mode & 32) != 0){
+        printf(1, "r");
+      }
+      else{
+        printf(1, "-");
+      }
+      if((st.mode & 16) != 0){
+          printf(1, "w");
+      }
+      else{
+        printf(1, "-");
+      }
+      if((st.mode & 8) != 0){
+        printf(1, "x");
+      }
+      else{
+        printf(1, "-");
+      }
+      if((st.mode & 4) != 0){
+        printf(1, "r");
+      }
+      else{
+        printf(1, "-");
+      }
+      if((st.mode & 2) != 0){
+        printf(1, "w");
+      }
+      else{
+        printf(1, "-");
+      }
+      if((st.mode & 1) != 0){
+        printf(1, "x");
+      }
+      else{
+        printf(1, "-");
+      }
+      printf(1, " %s %d %d %d\n", st.owner, st.type, st.ino, st.size);
     }
     break;
   }

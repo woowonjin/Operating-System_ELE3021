@@ -196,6 +196,7 @@ UPROGS=\
     _login\
     _p3_useradd\
     _p3_userdel\
+    _p3_chmod\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -265,7 +266,7 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
 	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
-	printf.c umalloc.c ml_test.c mlfq_test.c p2_admin_test.c p2_memory_test.c pmanager.c p2_stack_test.c p2_shmem_test.c login.c p3_useradd.c p3_userdel.c\
+	printf.c umalloc.c ml_test.c mlfq_test.c p2_admin_test.c p2_memory_test.c pmanager.c p2_stack_test.c p2_shmem_test.c login.c p3_useradd.c p3_userdel.c p3_chmod.c\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 

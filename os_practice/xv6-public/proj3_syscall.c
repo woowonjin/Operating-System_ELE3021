@@ -27,7 +27,20 @@ int sys_userdel(void){
     return userdel(username);
 }
 
-int sys_owner(char* username){
-    strcpy(myproc()->owner, username);
-    return 0;
+int sys_owner(void){
+    char* username;
+    if(argstr(0, &username) < 0){
+        return -1;
+    }
+    return owner(username);
+}
+
+int sys_chmod(void){
+    char* path;
+    int mode;
+    if((argstr(0, &path) < 0) || argint(1, &mode)){
+        return -1;
+    }
+    return chmod(path, mode);
+
 }
