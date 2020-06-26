@@ -59,6 +59,9 @@ struct proc {
   int stack_size;
   int tick;
   char* shared_memory;
+
+  //proj3
+  char owner[15];
 };
 
 // Process memory is laid out contiguously, low addresses first:

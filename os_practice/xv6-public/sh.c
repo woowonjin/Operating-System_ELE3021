@@ -164,6 +164,9 @@ main(void)
         printf(2, "cannot cd %s\n", buf+3);
       continue;
     }
+    else if(buf[0] == 'l' && buf[1] == 'o' && buf[2] == 'g' && buf[3] == 'o' && buf[4] == 'u' && buf[5] == 't'){
+        exit();
+    }
     if(fork1() == 0)
       runcmd(parsecmd(buf));
     wait();

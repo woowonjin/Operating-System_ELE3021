@@ -27,6 +27,25 @@ static void itrunc(struct inode*);
 // only one device
 struct superblock sb; 
 
+extern struct inode* create(char *path, short type, short major, short minor);
+char*
+strcpy(char *s, const char *t)
+{
+  char *os;
+
+  os = s;
+  while((*s++ = *t++) != 0)
+    ;
+  return os;
+}
+
+int
+strcmp(const char *p, const char *q)
+{
+  while(*p && *p == *q)
+    p++, q++;
+  return (uchar)*p - (uchar)*q;
+}
 // Read the super block.
 void
 readsb(int dev, struct superblock *sb)
@@ -667,4 +686,60 @@ struct inode*
 nameiparent(char *path, char *name)
 {
   return namex(path, 1, name);
+}
+
+int useradd(char* username, char* password){
+    struct inode* ip = namei("./userlist");
+    username[strlen(username)] = 0;
+    password[strlen(password)] = 0;
+    int count = 0;
+    begin_op();
+    ilock(ip);
+    for(int i = 0; i < 10; i++){
+        char id[15] = {0};
+        readi(ip, id, i*30, 15);
+        if(id[0] == 0)
+            break;
+        count++;
+    }
+    if(count > 9){
+        iunlock(ip);
+        end_op();
+        return -1;
+    }
+    for(int i = 0; i < 10; i++){
+        char id[15] = {0};
+        readi(ip, id, i*30, 15);
+        if(id[0] == 0)
+            break;
+        if(strcmp(username, id) == 0){
+            //already exist
+            iunlock(ip);
+            end_op();
+            return -1;
+        }
+    }
+
+    for(int i = 0; i < 10; i++){
+        char pwd[15] = {0};
+        char id[15] = {0};
+        readi(ip, id, i*30, 15);
+        readi(ip, pwd, i*30+15, 15);
+        if(id[0] == 0 && writei(ip, username, 30*i, 15) > 0 && writei(ip, password, 30*i+15, 15) > 0){
+            iupdate(ip); 
+            iunlock(ip);
+             end_op();
+             //dir
+             begin_op();
+             struct inode* dir;
+             if((dir = create(username, T_DIR, 0, 0)) != 0){
+                iunlockput(dir);
+             }
+             end_op();
+             return 0;
+        }
+    }
+    end_op();
+    iunlock(ip);
+    return -1;
 }
