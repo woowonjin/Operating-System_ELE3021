@@ -112,6 +112,8 @@ extern int sys_exec2(void);
 extern int sys_list(void);
 extern int sys_getshmem(void);
 extern int sys_useradd(void);
+extern int sys_userdel(void);
+extern int sys_owner(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -144,6 +146,8 @@ static int (*syscalls[])(void) = {
 [SYS_list]   sys_list,
 [SYS_getshmem]   sys_getshmem,
 [SYS_useradd]   sys_useradd,
+[SYS_userdel]   sys_userdel,
+[SYS_owner]   sys_owner,
 };
 
 void

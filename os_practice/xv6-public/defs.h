@@ -201,5 +201,6 @@ char*           getshmem(int);
 
 //proj3
 int             useradd(char*, char*);
+int             userdel(char*);
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))

@@ -29,3 +29,5 @@
 #define SYS_list  28
 #define SYS_getshmem  29
 #define SYS_useradd  30
+#define SYS_userdel  31
+#define SYS_owner  32

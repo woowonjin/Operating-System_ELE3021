@@ -733,6 +733,7 @@ int useradd(char* username, char* password){
              begin_op();
              struct inode* dir;
              if((dir = create(username, T_DIR, 0, 0)) != 0){
+ //                strcpy(dir->owner, username);
                 iunlockput(dir);
              }
              end_op();
@@ -742,4 +743,35 @@ int useradd(char* username, char* password){
     end_op();
     iunlock(ip);
     return -1;
+}
+
+int userdel(char* username){
+    struct inode* ip;
+    username[strlen(username)] = 0;
+    if(strcmp(username, "root") == 0){
+        return -1;
+    }
+    char init_user[15] = {0};
+    begin_op();
+    ip = namei("/userlist");
+    ilock(ip);
+    for(int i = 0; i < 10; i++){
+        char id[15] = {0};
+        readi(ip, id, i*30, 15);
+        if(id[0] == 0){
+            break;
+        }
+        if(strcmp(id, username) == 0){
+            writei(ip, init_user, i*30, 15);
+            writei(ip, init_user, i*30+15, 15);
+            iunlock(ip);
+            end_op();
+            return 0;
+        }
+    }
+
+    iunlock(ip);
+    end_op();
+    return -1;
+
 }

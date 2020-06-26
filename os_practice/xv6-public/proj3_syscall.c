@@ -7,6 +7,9 @@
 #include "mmu.h"
 #include "proc.h"
 
+
+extern char* strcpy(char *s, const char *t);
+
 int sys_useradd(void){
     char* username;
     char* password;
@@ -14,4 +17,17 @@ int sys_useradd(void){
         return -1;    
     }
     return useradd(username, password);
+}
+
+int sys_userdel(void){
+    char* username;
+    if(argstr(0, &username) < 0){
+        return -1;
+    }
+    return userdel(username);
+}
+
+int sys_owner(char* username){
+    strcpy(myproc()->owner, username);
+    return 0;
 }

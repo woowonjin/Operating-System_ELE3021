@@ -65,6 +65,7 @@ int main(int argc, char *argv[]){
             }
         }
         if(success){
+            owner(name);
             pid = fork();
             if(pid < 0){
                 printf(1, "init: fork failed\n");

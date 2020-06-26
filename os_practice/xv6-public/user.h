@@ -32,6 +32,8 @@ int exec2(char*, char**, int);
 int list(void);
 char* getshmem(int);
 int useradd(char*, char*);
+int userdel(char*);
+int owner(char*);
 
 // ulib.c
 int stat(const char*, struct stat*);
